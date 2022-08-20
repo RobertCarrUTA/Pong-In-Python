@@ -53,6 +53,10 @@ def player2_movement():
         player2.bottom = screen_height
 
 def opponent_ai_movement():
+    global opponent_speed
+    if ball_speed_x > 12:
+        opponent_speed = 15
+
     # Make the opponent try to block the ball
     if opponent.top < ball.y:
         opponent.top += opponent_speed
@@ -104,7 +108,7 @@ font = pygame.font.SysFont('courier', 32)
 
 ball_speed_x = 7 * random.choice((1, -1))
 ball_speed_y = 7 * random.choice((1, -1))
-opponent_speed = 9
+opponent_speed = 11
 player2_speed = 0
 score_opponent = 0
 score_player2 = 0
@@ -124,11 +128,11 @@ while True:
     # To allow for continuous movement, we should use .key.get_pressed()
     keys = pygame.key.get_pressed()
     if keys[pygame.K_DOWN]:
-        player2_speed += 7
+        player2_speed += 9
         print("DOWN")
 
     if keys[pygame.K_UP]:
-        player2_speed -= 7
+        player2_speed -= 9
         print("UP")
 
     ball_animation_collision()
