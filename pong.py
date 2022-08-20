@@ -110,7 +110,10 @@ score_opponent = 0
 score_player2 = 0
 
 while True:
+
+    # This needs to be reset so the player stops moving when they are not pressing up or down
     player2_speed = 0
+    
     # Handle input
     for event in pygame.event.get():
         # In the case that the user closes the game by pressing X
@@ -123,7 +126,6 @@ while True:
     if keys[pygame.K_DOWN]:
         player2_speed += 7
         print("DOWN")
-
 
     if keys[pygame.K_UP]:
         player2_speed -= 7
