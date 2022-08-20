@@ -4,7 +4,7 @@
 import pygame, sys, random
 
 def ball_animation_collision():
-    global ball_speed_x, ball_speed_y # Only use this approach because the program is simple
+    global ball_speed_x, ball_speed_y, score_opponent, score_player2 # Only use this approach because the program is simple
     
     # Moving the ball
     ball.x += ball_speed_x
@@ -18,15 +18,24 @@ def ball_animation_collision():
     # If the ball hits the top or the bottom of the window, bounce it off the boundary
     if ball.top <= 0 or ball.bottom >= screen_height:
         ball_speed_y *= -1
+    
     # If the ball hits the left or right of the window, reset it
-    if ball.left <= 0 or ball.right >= screen_width:
+    if ball.left <= 0:
         ball_reset()
+        score_player2 += 1
+    if ball.right >= screen_width:
+        ball_reset()
+        score_opponent += 1
 
     # Detecting ball collisions with the paddles (or players), speed it up every time a player hits the ball
-    if ball.colliderect(opponent) or ball.colliderect(player2):
+    if ball.colliderect(opponent):
         ball_speed_x *= -1
-        ball_speed_x *= 1.03
-        ball_speed_y *= 1.03
+        ball_speed_x *= 1.10
+        ball_speed_y *= 1.10
+    if ball.colliderect(player2):
+        ball_speed_x *= -1
+        ball_speed_x *= 1.10
+        ball_speed_y *= 1.10
 
 def ball_reset():
     global ball_speed_x, ball_speed_y # Only use this approach because the program is simple
@@ -56,12 +65,19 @@ def opponent_ai_movement():
     if opponent.bottom >= screen_height:
         opponent.bottom = screen_height
 
+def show_score():
+    global font, score_opponent, score_player2
+    score = font.render("Opponent: " + str(score_opponent) + "      " + "Player: " + str(score_player2), True, (255, 255, 255))
+    center = score.get_rect(center=(screen_width/2, screen_height/2))
+    center.bottom = screen_height - 665
+    screen.blit(score, center)
+
 # General setup
 pygame.init()
 clock = pygame.time.Clock()
 
 # Setting up the main window
-screen_width = 1000
+screen_width = 1400
 screen_height = 700
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Pong")
@@ -84,31 +100,34 @@ player2 = pygame.Rect(screen_width - 20, screen_height/2 - 70, 10, 140)
 
 bg_color = pygame.Color("grey12")
 light_grey = (200, 200, 200)
+font = pygame.font.SysFont('courier', 32)
 
 ball_speed_x = 7 * random.choice((1, -1))
 ball_speed_y = 7 * random.choice((1, -1))
-opponent_speed = 7
+opponent_speed = 9
 player2_speed = 0
+score_opponent = 0
+score_player2 = 0
 
 while True:
+    player2_speed = 0
     # Handle input
     for event in pygame.event.get():
         # In the case that the user closes the game by pressing X
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        # If player 2 presses up on the keyboard
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_DOWN:
-                player2_speed += 7
-            if event.key == pygame.K_UP:
-                player2_speed -= 7
-        # If player 2 presses down on the keyboard
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
-                player2_speed += 7
-            if event.key == pygame.K_UP:
-                player2_speed -= 7
+
+    # To allow for continuous movement, we should use .key.get_pressed()
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_DOWN]:
+        player2_speed += 7
+        print("DOWN")
+
+
+    if keys[pygame.K_UP]:
+        player2_speed -= 7
+        print("UP")
 
     ball_animation_collision()
     player2_movement()
@@ -122,6 +141,7 @@ while True:
     pygame.draw.rect(screen, light_grey, opponent)
     pygame.draw.rect(screen, light_grey, player2)
     pygame.draw.ellipse(screen, light_grey, ball)
+    show_score()
 
     # Drawing the line that divides the two sides
     pygame.draw.aaline(screen, light_grey, (screen_width/2, 0), (screen_width/2, screen_height))
