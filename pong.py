@@ -129,11 +129,8 @@ while True:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_DOWN]:
         player2_speed += 9
-        print("DOWN")
-
     if keys[pygame.K_UP]:
         player2_speed -= 9
-        print("UP")
 
     ball_animation_collision()
     player2_movement()
@@ -154,4 +151,4 @@ while True:
 
     # Updating the window
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(70)
