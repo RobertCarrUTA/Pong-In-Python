@@ -1,4 +1,3 @@
-*README.md is still under construction*
 # Pong in Python
 
 ## About
